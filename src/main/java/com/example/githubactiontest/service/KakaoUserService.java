@@ -105,9 +105,11 @@ public class KakaoUserService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
+        String profile_image = jsonNode.get("properties")
+                .get("profile_image").asText();
 
         System.out.println("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfoDto(id, nickname, email,profile_image);
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
