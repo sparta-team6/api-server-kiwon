@@ -36,7 +36,7 @@ public class KakaoUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void kakaoLogin(String code) throws JsonProcessingException {
+    public KakaoUserInfoDto kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -48,6 +48,7 @@ public class KakaoUserService {
 
         // 4. 강제 로그인 처리
         forceLogin(kakaoUser);
+        return kakaoUserInfo;
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -110,34 +111,34 @@ public class KakaoUserService {
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        Long kakaoId = kakaoUserInfo.getId();
-        User kakaoUser = userRepository.findByKakaoId(kakaoId)
+        // DB 에 중복된 email 가 있는지 확인
+        String email = kakaoUserInfo.getEmail();
+        User kakaoUser = userRepository.findByUsername(email)
                 .orElse(null);
         if (kakaoUser == null) {
-            // 카카오 사용자 이메일과 동일한 이메일을 가진 회원이 있는지 확인
-            String kakaoEmail = kakaoUserInfo.getEmail();
-            User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
-            if (sameEmailUser != null) {
-                kakaoUser = sameEmailUser;
-                // 기존 회원정보에 카카오 Id 추가
-                kakaoUser.setKakaoId(kakaoId);
-            } else {
-                // 신규 회원가입
-                // username: kakao nickname
-                String nickname = kakaoUserInfo.getNickname();
+//            // 카카오 사용자 이메일과 동일한 이메일을 가진 회원이 있는지 확인
+//            String kakaoEmail = kakaoUserInfo.getEmail();
+//            User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
+//            if (sameEmailUser != null) {
+//                kakaoUser = sameEmailUser;
+//                // 기존 회원정보에 카카오 Id 추가
+//                kakaoUser.setKakaoId(email);
+//            } else {
+            // 신규 회원가입
+            // username: kakao nickname
+            String nickname = kakaoUserInfo.getNickname();
 
-                // password: random UUID
-                String password = UUID.randomUUID().toString();
-                String encodedPassword = passwordEncoder.encode(password);
+            // password: random UUID
+            String password = UUID.randomUUID().toString();
+            String encodedPassword = passwordEncoder.encode(password);
 
-                // email: kakao email
-                String email = kakaoUserInfo.getEmail();
-                // role: 일반 사용자
-                UserRoleEnum role = UserRoleEnum.USER;
+//            // email: kakao email
+//            String email = kakaoUserInfo.getEmail();
+            // role: 일반 사용자
+            UserRoleEnum role = UserRoleEnum.USER;
 
-                kakaoUser = new User(nickname, encodedPassword, email, role, kakaoId);
-            }
+            kakaoUser = new User(nickname, encodedPassword, email, role, email);
+//            }
 
             userRepository.save(kakaoUser);
         }
