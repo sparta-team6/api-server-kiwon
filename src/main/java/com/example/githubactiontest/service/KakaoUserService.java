@@ -59,7 +59,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "6707c68839f00d1204c2d5e1aa559698");
-        body.add("redirect_uri", "http://localhost:8080/user/kakao/callback");
+        body.add("redirect_uri", "http://3.34.133.92:8080/user/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
