@@ -9,9 +9,9 @@ name: Spring Boot & Gradle CI/CD
 # branch 단위 외에도, tag나 cron 식 등을 사용할 수 있음
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -34,9 +34,11 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+
       # 전송할 파일을 담을 디렉토리 생성
       - name: Make Directory for deliver
         run: mkdir -p deploy
+#               -p 없으면 만들고 없으면 그대로
 
       # Jar 파일 Copy
       - name: Copy Jar
@@ -51,7 +53,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: aws s3 cp --region ap-northeast-2 --acl private ./springboot-intro-build.zip s3://pg-parunson/
+        run: aws s3 cp --region ap-northeast-2 --acl private ./springboot-intro-build.zip s3://funnykyeon/
 
       # Deploy
       - name: Deploy
@@ -60,8 +62,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws deploy create-deployment \
-          --application-name springboot-intro \
-          --deployment-group-name springboot-intro-group \
+          --application-name springboot-inrto \
+          --deployment-group-name springboot-inrto-group \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=pg-parunson,bundleType=zip,key=springboot-intro-build.zip \
+          --s3-location bucket=funnykyeon,bundleType=zip,key=springboot-intro-build.zip \
           --region ap-northeast-2
