@@ -43,10 +43,9 @@ public class UserController {
 
     // 카카오 인가 처리
     @GetMapping("/user/kakao/callback")
-    public String
+    public KakaoUserInfoDto
     kakaoLogin(@RequestParam String code) throws JsonProcessingException {
 // authorizedCode: 카카오 서버로부터 받은 인가 코드
-        kakaoUserService.kakaoLogin(code);
-        return "redirect:/";
+        return kakaoUserService.kakaoLogin(code);
     }
 }
