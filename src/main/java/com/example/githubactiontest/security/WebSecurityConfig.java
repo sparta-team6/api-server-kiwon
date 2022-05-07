@@ -73,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://3.36.112.56:8080/");
+        configuration.addAllowedOrigin("http://3.34.133.92:8080/");
         configuration.addAllowedOrigin("http://localhost:3000/");
         configuration.addAllowedOrigin("http://localhost:8080/");
         configuration.addAllowedMethod("");
