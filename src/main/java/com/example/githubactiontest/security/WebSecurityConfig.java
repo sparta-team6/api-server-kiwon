@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
@@ -29,7 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.csrf().disable()
+                .cors().configurationSource(corsConfigurationSource());
+
 
         http.authorizeRequests()
 // image 폴더를 login 없이 허용
@@ -63,4 +68,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 // "접근 불가" 페이지 URL 설정
                 .accessDeniedPage("/forbidden.html");
     }
+
+    // CORS 정책 필터
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://3.36.112.56:8080/");
+        configuration.addAllowedOrigin("http://localhost:3000/");
+        configuration.addAllowedOrigin("http://localhost:8080/");
+        configuration.addAllowedMethod("");
+        configuration.addAllowedHeader("");
+        configuration.addExposedHeader("Authorization");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
+
