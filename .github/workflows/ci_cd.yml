@@ -1,7 +1,3 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-# Repo Action 페이지에 나타날 이름
 name: Spring Boot & Gradle CI/CD
 
 # Event Trigger
@@ -9,16 +5,12 @@ name: Spring Boot & Gradle CI/CD
 # branch 단위 외에도, tag나 cron 식 등을 사용할 수 있음
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
-    # 실행 환경 지정
     runs-on: ubuntu-latest
 
-    # Task의 sequence를 명시한다.
     steps:
       - uses: actions/checkout@v2
 
@@ -34,11 +26,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-
       # 전송할 파일을 담을 디렉토리 생성
       - name: Make Directory for deliver
         run: mkdir -p deploy
-#               -p 없으면 만들고 없으면 그대로
 
       # Jar 파일 Copy
       - name: Copy Jar
@@ -46,14 +36,16 @@ jobs:
 
       # 압축파일 형태로 전달
       - name: Make zip file
-        run: zip -r -qq -j ./springboot-intro-build.zip ./deploy
+        run: zip -r -qq -j ./springboot-coup-build.zip ./deploy
 
       # S3 Bucket으로 copy
       - name: Deliver to AWS S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: aws s3 cp --region ap-northeast-2 --acl private ./springboot-intro-build.zip s3://funnykyeon/
+        run: |
+          aws s3 cp --region ap-northeast-2 \
+          --acl private ./springboot-coup-build.zip ${{ secrets.AWS_S3_BUCKET_ADDRESS }}
 
       # Deploy
       - name: Deploy
@@ -62,8 +54,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws deploy create-deployment \
-          --application-name springboot-inrto \
-          --deployment-group-name springboot-inrto-group \
+          --application-name ${{ secrets.AWS_APP_NAME }} \
+          --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP_NAME }} \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=funnykyeon,bundleType=zip,key=springboot-intro-build.zip \
+          --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=springboot-coup-build.zip \
           --region ap-northeast-2
