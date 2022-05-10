@@ -6,6 +6,7 @@ import com.example.githubactiontest.service.KakaoUserService;
 import com.example.githubactiontest.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import com.fasterxml.jackson.databind.JsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,8 @@ public class UserController {
         Cookie myCookie = new Cookie("cookieName", "cookieValue");
         myCookie.setMaxAge(-1);
         myCookie.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
+        myCookie.setDomain("localhost"); // 도메인 설정
+//        myCookie.set("None"); // SameSite 설정
         response.addCookie(myCookie);
         return kakaoUserService.kakaoLogin(code);
     }
