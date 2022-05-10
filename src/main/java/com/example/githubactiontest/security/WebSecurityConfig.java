@@ -72,15 +72,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // CORS 정책 필터
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://3.34.133.92:8080/");
-        configuration.addAllowedOrigin("http://localhost:3000/");
-        configuration.addAllowedOrigin("http://localhost:8080/");
-        configuration.addAllowedMethod("");
-        configuration.addAllowedHeader("");
-        configuration.addExposedHeader("Authorization");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.addExposedHeader("Authorization");
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }
