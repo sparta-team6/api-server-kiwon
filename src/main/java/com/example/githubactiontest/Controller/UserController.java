@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,14 +52,15 @@ public class UserController {
     public @ResponseBody KakaoUserInfoDto
     kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
 // authorizedCode: 카카오 서버로부터 받은 인가 코드
-        ResponseCookie cookie = ResponseCookie.from("access-token", "token")
-                .path("/")
-                .secure(true)
-                .sameSite("None")
-                .httpOnly(false)
-                .domain("localhost")
-                .build();
-        response.setHeader("Set-Cookie", cookie.toString());
+
+        // 크롬익스텐션 용 엑세스 토큰
+        Cookie cookie = new Cookie("cookieName", "cookieValue");
+        cookie.setMaxAge(1 * 24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        response.addCookie(cookie);
         return kakaoUserService.kakaoLogin(code);
     }
 }

@@ -86,14 +86,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
 
     }
-
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("https://web.abcd.com")
-                .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE", "HEAD")
-                .allowedHeaders("*")
-                .exposedHeaders("Set-Cookie")
-                .allowCredentials(true);
-    }
 }
 
